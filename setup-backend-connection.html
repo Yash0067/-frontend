@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend Connection Setup</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .test-btn {
+            background: #2196F3;
+        }
+        .test-btn:hover {
+            background: #0b7dda;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .code-block {
+            background: #f4f4f4;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        .step {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-left: 4px solid #4CAF50;
+            border-radius: 4px;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Backend Connection Setup</h1>
+        <p class="subtitle">Connect your Vercel frontend to your Render backend</p>
+        
+        <div class="input-group">
+            <label for="backendUrl">Your Render Backend URL:</label>
+            <input type="text" id="backendUrl" placeholder="https://backtesting-api.onrender.com" />
+        </div>
+        
+        <button onclick="testConnection()" class="test-btn">Test Connection</button>
+        <button onclick="updateConfig()">Update Configuration</button>
+        
+        <div id="result" class="result"></div>
+        
+        <div class="step">
+            <h3>Step 1: Get Your Render Backend URL</h3>
+            <p>If you haven't deployed yet:</p>
+            <ol>
+                <li>Go to <a href="https://dashboard.render.com" target="_blank">Render Dashboard</a></li>
+                <li>Create a new Web Service</li>
+                <li>Connect your repository: <code>Yash0067/backtesting0</code></li>
+                <li>Set Root Directory to: <code>backend</code></li>
+                <li>Copy the URL after deployment</li>
+            </ol>
+        </div>
+        
+        <div class="step">
+            <h3>Step 2: Test Your Backend</h3>
+            <p>Enter your URL above and click "Test Connection" to verify it's working.</p>
+        </div>
+        
+        <div class="step">
+            <h3>Step 3: Update Configuration</h3>
+            <p>Click "Update Configuration" to generate the updated files. Then commit and push to GitHub.</p>
+        </div>
+    </div>
+
+    <script>
+        function showResult(message, type) {
+            const result = document.getElementById('result');
+            result.className = 'result ' + type;
+            result.style.display = 'block';
+            result.innerHTML = message;
+        }
+
+        async function testConnection() {
+            const url = document.getElementById('backendUrl').value.trim();
+            
+            if (!url) {
+                showResult('Please enter your backend URL', 'error');
+                return;
+            }
+            
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                showResult('URL must start with http:// or https://', 'error');
+                return;
+            }
+            
+            showResult('Testing connection...', 'info');
+            
+            try {
+                const response = await fetch(url + '/docs', { method: 'HEAD' });
+                if (response.ok || response.status === 200 || response.status === 405) {
+                    showResult('✅ Connection successful! Your backend is working.', 'success');
+                } else {
+                    showResult('⚠️ Backend responded but may not be fully ready. Status: ' + response.status, 'info');
+                }
+            } catch (error) {
+                showResult('❌ Connection failed: ' + error.message + '<br>Make sure your backend is deployed and not sleeping.', 'error');
+            }
+        }
+
+        function updateConfig() {
+            const url = document.getElementById('backendUrl').value.trim();
+            
+            if (!url) {
+                showResult('Please enter your backend URL first', 'error');
+                return;
+            }
+            
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                showResult('URL must start with http:// or https://', 'error');
+                return;
+            }
+            
+            // Generate updated config.js content
+            const configJs = `// API Configuration
+// Auto-generated configuration
+(function() {
+  'use strict';
+  
+  let apiBaseUrl = null;
+  
+  if (typeof window !== 'undefined' && window.location) {
+    const metaApiUrl = document.querySelector('meta[name="api-url"]');
+    if (metaApiUrl) {
+      apiBaseUrl = metaApiUrl.getAttribute('content');
+    }
+  }
+  
+  const DEFAULT_API_URL = '${url}';
+  const baseUrl = apiBaseUrl || DEFAULT_API_URL;
+  
+  window.API_CONFIG = {
+    BASE_URL: baseUrl,
+    API_BASE: baseUrl,
+    API_BASE_URL: baseUrl + '/api'
+  };
+  
+  const API_CONFIG = window.API_CONFIG;
+  
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = API_CONFIG;
+  }
+})();
+`;
+
+            // Generate updated index.html meta tag
+            const metaTag = `<meta name="api-url" content="${url}" />`;
+            
+            showResult(`
+                <h3>✅ Configuration Generated!</h3>
+                <p><strong>Next steps:</strong></p>
+                <ol>
+                    <li>Copy the code below</li>
+                    <li>Update <code>config.js</code> with the new content</li>
+                    <li>Update <code>index.html</code> meta tag</li>
+                    <li>Commit and push to GitHub</li>
+                </ol>
+                
+                <div class="code-block">
+                    <strong>config.js:</strong><br>
+                    <pre>${configJs}</pre>
+                </div>
+                
+                <div class="code-block">
+                    <strong>index.html (meta tag):</strong><br>
+                    <pre>${metaTag}</pre>
+                </div>
+                
+                <p><strong>Or use these commands:</strong></p>
+                <div class="code-block">
+                    cd frontend<br>
+                    # Edit config.js and index.html with the above content<br>
+                    git add config.js index.html<br>
+                    git commit -m "Connect to Render backend: ${url}"<br>
+                    git push origin main
+                </div>
+            `, 'success');
+        }
+    </script>
+</body>
+</html>
+

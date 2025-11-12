@@ -21,6 +21,8 @@
   }
   
   // Default fallback - UPDATE THIS WITH YOUR RENDER BACKEND URL
+  // To update: Run 'node auto-update-config.js <YOUR_RENDER_URL>'
+  // Or edit this file and index.html manually
   const DEFAULT_API_URL = 'https://your-backend-url.onrender.com';
   
   // Use detected URL or default
