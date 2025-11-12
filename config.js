@@ -20,10 +20,8 @@
     }
   }
   
-  // Default fallback - UPDATE THIS WITH YOUR RENDER BACKEND URL
-  // To update: Run 'node auto-update-config.js <YOUR_RENDER_URL>'
-  // Or edit this file and index.html manually
-  const DEFAULT_API_URL = 'https://your-backend-url.onrender.com';
+  // Default fallback - Backend URL configured
+  const DEFAULT_API_URL = 'https://backtesting0-7sffm6hw4-backends-projects-bf568cf0.vercel.app';
   
   // Use detected URL or default
   const baseUrl = apiBaseUrl || DEFAULT_API_URL;
