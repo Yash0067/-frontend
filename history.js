@@ -23,10 +23,13 @@ const tradesBody = document.getElementById('tradesBody');
 const exportJsonButton = document.getElementById('exportJson');
 const deleteStrategyButton = document.getElementById('deleteStrategy');
 
-// API Base URL - will be set from config.js or use default
-const API_BASE_URL = (typeof API_CONFIG !== 'undefined' && API_CONFIG.API_BASE_URL)
-  ? API_CONFIG.API_BASE_URL
-  : 'https://your-backend-url.onrender.com/api'; // Update this with your Render backend URL
+// API Base URL - loaded from config.js
+// config.js sets window.API_CONFIG, which we use here
+const API_BASE_URL = (typeof window !== 'undefined' && window.API_CONFIG && window.API_CONFIG.API_BASE_URL)
+  ? window.API_CONFIG.API_BASE_URL
+  : (typeof API_CONFIG !== 'undefined' && API_CONFIG.API_BASE_URL)
+    ? API_CONFIG.API_BASE_URL
+    : 'https://your-backend-url.onrender.com/api'; // Fallback - update in config.js or index.html meta tag
 
 // Initialize the page
 async function init() {

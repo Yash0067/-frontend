@@ -1,23 +1,43 @@
 // API Configuration
-// Update this with your Render backend URL
-// Example: 'https://backtesting-api.onrender.com'
-const API_CONFIG = {
-  // Replace 'your-backend-url.onrender.com' with your actual Render backend URL
-  BASE_URL: 'https://your-backend-url.onrender.com',
-  API_BASE: 'https://your-backend-url.onrender.com',
-  API_BASE_URL: 'https://your-backend-url.onrender.com/api'
-};
+// This file will be automatically updated or you can set it manually
+// For Vercel: You can also set VERCEL_ENV_API_URL in Vercel environment variables
 
-// For Vercel deployment, you can also use environment variables
-// Uncomment and use this if you set VERCEL_ENV variables:
-// const API_CONFIG = {
-//   BASE_URL: window.VERCEL_ENV?.API_URL || 'https://your-backend-url.onrender.com',
-//   API_BASE: window.VERCEL_ENV?.API_URL || 'https://your-backend-url.onrender.com',
-//   API_BASE_URL: (window.VERCEL_ENV?.API_URL || 'https://your-backend-url.onrender.com') + '/api'
-// };
-
-// Export for use in other files
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = API_CONFIG;
-}
-
+(function() {
+  'use strict';
+  
+  // Try to get from Vercel environment variable first
+  let apiBaseUrl = null;
+  
+  // Check if running on Vercel with environment variable
+  if (typeof window !== 'undefined' && window.location) {
+    // Check for Vercel environment variable (set in Vercel dashboard)
+    const hostname = window.location.hostname;
+    
+    // If on Vercel domain, try to get from meta tag or environment
+    const metaApiUrl = document.querySelector('meta[name="api-url"]');
+    if (metaApiUrl) {
+      apiBaseUrl = metaApiUrl.getAttribute('content');
+    }
+  }
+  
+  // Default fallback - UPDATE THIS WITH YOUR RENDER BACKEND URL
+  const DEFAULT_API_URL = 'https://your-backend-url.onrender.com';
+  
+  // Use detected URL or default
+  const baseUrl = apiBaseUrl || DEFAULT_API_URL;
+  
+  // Create global API_CONFIG
+  window.API_CONFIG = {
+    BASE_URL: baseUrl,
+    API_BASE: baseUrl,
+    API_BASE_URL: baseUrl + '/api'
+  };
+  
+  // Also set as const for backward compatibility
+  const API_CONFIG = window.API_CONFIG;
+  
+  // Export for module systems
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = API_CONFIG;
+  }
+})();

@@ -1,7 +1,10 @@
-// API Configuration - will be set from config.js or use default
-const API_BASE = (typeof API_CONFIG !== 'undefined' && API_CONFIG.API_BASE) 
-  ? API_CONFIG.API_BASE 
-  : 'https://your-backend-url.onrender.com'; // Update this with your Render backend URL
+// API Configuration - loaded from config.js
+// config.js sets window.API_CONFIG, which we use here
+const API_BASE = (typeof window !== 'undefined' && window.API_CONFIG && window.API_CONFIG.API_BASE)
+  ? window.API_CONFIG.API_BASE
+  : (typeof API_CONFIG !== 'undefined' && API_CONFIG.API_BASE)
+    ? API_CONFIG.API_BASE
+    : 'https://your-backend-url.onrender.com'; // Fallback - update in config.js or index.html meta tag
 
 const el = (id) => document.getElementById(id);
 const show = (id, v=true) => {
